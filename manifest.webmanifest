@@ -1,0 +1,22 @@
+{
+	"name": "Hey! En Route",
+	"short_name": "En Route",
+	"description": "Plan road trips city by city: routes, driving mode, what's along the way, and travel alerts.",
+	"id": "./",
+	"start_url": "./#/explore",
+	"scope": "./",
+	"display": "standalone",
+	"orientation": "portrait",
+	"background_color": "#fbf7f0",
+	"theme_color": "#1b6a66",
+	"categories": [ "travel", "navigation" ],
+	"icons": [
+		{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+		{ "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+		{ "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+	],
+	"shortcuts": [
+		{ "name": "My routes", "url": "./#/routes" },
+		{ "name": "Alerts", "url": "./#/alerts" }
+	]
+}

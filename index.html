@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Hey! En Route</title>
+	<meta name="description" content="Plan road trips city by city: routes, driving mode, what's along the way, and travel alerts.">
+	<meta name="theme-color" content="#1b6a66">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<meta name="apple-mobile-web-app-title" content="En Route">
+	<link rel="manifest" href="manifest.webmanifest">
+	<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+	<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=DM+Serif+Display&display=swap">
+	<link rel="stylesheet" href="css/app.css">
+	<script type="module" src="src/app.js"></script>
+</head>
+<body>
+	<a class="app-skip" href="#app">Skip to content</a>
+	<main id="app" class="app-main" tabindex="-1">
+		<p class="app-loading" role="status"><span class="app-spinner" aria-hidden="true"></span>Loading Hey! En Route…</p>
+	</main>
+	<nav class="app-tabs" aria-label="Main">
+		<a href="#/explore" data-tab="explore">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Explore</span>
+		</a>
+		<a href="#/routes" data-tab="routes">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg><span>Routes</span>
+		</a>
+		<a href="#/alerts" data-tab="alerts">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg><span>Alerts</span><span class="app-badge" hidden>0</span>
+		</a>
+		<a href="#/account" data-tab="account">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Account</span>
+		</a>
+	</nav>
+	<noscript><p style="padding:2rem">Hey! En Route needs JavaScript. You can also use <a href="https://heyenroute.com/">heyenroute.com</a>.</p></noscript>
+</body>
+</html>
