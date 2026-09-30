@@ -108,8 +108,9 @@ function bindForgot( main ) {
 		if ( res.ok ) {
 			ok.textContent = res.body.message || 'Check your email for a link to choose a new password.';
 			ok.hidden = false;
-		} else if ( 404 === res.status && store.config.urls.lost ) {
-			window.open( store.config.urls.lost, '_blank', 'noopener' ); // A site on an older plugin.
+		} else if ( 404 === res.status ) {
+			err.textContent = 'Password resets aren’t switched on yet. Please try again later.';
+			err.hidden = false;
 		} else {
 			err.textContent = res.body.message || 'Couldn’t send the link. Try again in a moment.';
 			err.hidden = false;

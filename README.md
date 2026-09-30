@@ -6,7 +6,7 @@ alerts as notifications. It's a web app (a "PWA"): plain HTML, CSS and
 JavaScript, with no build step, hosted free on GitHub Pages.
 
 Everything comes from the WordPress site, [heyenroute.com](https://heyenroute.com),
-through the Hey! En Route Core plugin (version 3.11.0 or later):
+through the Hey! En Route Core plugin (version 3.13.0 or later):
 - **Members:** they sign in with their usual email and password.
 - **Data:** cities, their routes, travel alerts, notifications, saves and
   Plus all come from the site. Changes show on both.
@@ -72,6 +72,8 @@ custom domain under **Settings → Pages**.
   device and sent as the `X-Hen-Token` header. The site stores only a hash of
   it. Signing out ends it, keys unused for 180 days stop working, and staff
   can sign everyone out on **Hey! En Route → App**.
+- **Passwords:** `app/forgot` emails a reset link that opens the app's
+  `#/reset` screen, and `app/reset` checks the link and saves the new password.
 - **App-only data:** `app/config` (map tiles, push key, where the site's
   scripts are), `app/me`, `app/city/{id}` and `app/alerts`. Everything else
   uses the same endpoints as the site: `cities`, `trips`, `save`, `notices`,

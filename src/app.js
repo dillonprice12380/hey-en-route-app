@@ -12,6 +12,7 @@ import routes from './views/routes.js';
 import route from './views/route.js';
 import alerts from './views/alerts.js';
 import account from './views/account.js';
+import reset from './views/reset.js';
 
 const views = [
 	[ /^#?\/?(explore)?$/, explore, 'explore' ],
@@ -20,6 +21,7 @@ const views = [
 	[ /^#\/route\/(\d+)$/, route, 'routes' ],
 	[ /^#\/alerts$/, alerts, 'alerts' ],
 	[ /^#\/account$/, account, 'account' ],
+	[ /^#\/reset(\?.*)?$/, reset, 'account' ],
 ];
 
 const main = $( '#app' );

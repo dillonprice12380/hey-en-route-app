@@ -5,7 +5,7 @@
  * The site sends an empty "wake up" push; this asks the site what's new
  * (by this device's push address) and shows it.
  */
-const VERSION = 'hen-app-2';
+const VERSION = 'hen-app-3';
 const SHELL = [
 	'./',
 	'index.html',
@@ -22,6 +22,7 @@ const SHELL = [
 	'src/views/route.js',
 	'src/views/alerts.js',
 	'src/views/account.js',
+	'src/views/reset.js',
 	'icons/icon-192.png',
 	'icons/icon-512.png',
 ];
@@ -56,7 +57,7 @@ self.addEventListener( 'fetch', ( e ) => {
 	}
 
 	// The site's data: fresh when online, the last copy when offline.
-	if ( url.href.startsWith( SITE + '/wp-json/hen/v1/' ) ) {
+	if ( url.href.startsWith( SITE + '/wp-json/hen/v1/' ) && ! url.pathname.includes( '/app/reset' ) ) {
 		e.respondWith(
 			fetch( req ).then( ( res ) => {
 				if ( res.ok ) { const copy = res.clone(); caches.open( 'hen-api' ).then( ( c ) => c.put( req, copy ) ); }
