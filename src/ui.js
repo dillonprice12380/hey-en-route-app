@@ -1,5 +1,6 @@
 /** Small helpers shared by the views. */
 import { SITE } from './config.js';
+import { appHref } from './site.js';
 
 export const $ = ( sel, root ) => ( root || document ).querySelector( sel );
 export const $$ = ( sel, root ) => Array.from( ( root || document ).querySelectorAll( sel ) );
@@ -26,7 +27,11 @@ export function haversine( a, b ) {
 }
 
 /** A link to the site that opens in the browser (outside the app). */
-export const siteLink = ( url, text, cls = '' ) => '<a href="' + esc( url || SITE ) + '" target="_blank" rel="noopener"' + ( cls ? ' class="' + esc( cls ) + '"' : '' ) + '>' + esc( text ) + '</a>';
+export const siteLink = ( url, text, cls = '' ) => {
+	// Pages of the site open inside the app; anywhere else in the browser.
+	const inApp = appHref( url || SITE );
+	return '<a href="' + esc( inApp || url || SITE ) + '"' + ( inApp ? '' : ' target="_blank" rel="noopener"' ) + ( cls ? ' class="' + esc( cls ) + '"' : '' ) + '>' + esc( text ) + '</a>';
+};
 
 /** "Directions" with Google Maps, Waze and Apple Maps (same menu as the site). */
 export function dirsMenu( dirs, name, big ) {

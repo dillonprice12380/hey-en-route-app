@@ -6,7 +6,7 @@ alerts as notifications. It's a web app (a "PWA"): plain HTML, CSS and
 JavaScript, with no build step, hosted free on GitHub Pages.
 
 Everything comes from the WordPress site, [heyenroute.com](https://heyenroute.com),
-through the Hey! En Route Core plugin (version 3.13.0 or later):
+through the Hey! En Route Core plugin (version 3.14.0 or later):
 - **Members:** they sign in with their usual email and password.
 - **Data:** cities, their routes, travel alerts, notifications, saves and
   Plus all come from the site. Changes show on both.
@@ -16,15 +16,17 @@ through the Hey! En Route Core plugin (version 3.13.0 or later):
 
 ## What's in it
 
+The app has everything the website has. Its own screens cover the things
+people use on the road, and every other page of the website opens inside
+the app, signed in, working exactly as on the site.
+
 | Tab | What it does |
 |---|---|
-| **Explore** | Search the site's cities, or sort them by distance with **Near me**. Each city shows its scores, cost a day, best season and top places. From there you can **save** it, **add it to a route**, get **directions** (Google Maps, Waze or Apple Maps), or open the full guide on the site. |
-| **Routes** | The member's routes, with stops and real road drives on a map. Change nights, reorder or remove stops, add stops, and set a start date. It also shows costs, **travel alerts** on the route, and **along the way** (towns on the drive and places right by the road). **Driving mode** (GPS next stop, what's coming up, alerts ahead, safety tips) is the same as on the site. |
+| **Explore** | Search the site's cities, or sort them by distance with **Near me**. Each city shows its scores, cost a day, best season and top places, with **save**, **add to a route** and **directions** (Google Maps, Waze or Apple Maps). **The full city guide** opens every tab of the city's page (overview, neighborhoods, costs, stays, things to do, food, events, safety, directory, nearby, routes and the City Circle). |
+| **Routes** | The member's routes, with stops and real road drives on a map. Change nights, reorder or remove stops, add stops, and set a start date. It also shows costs, **travel alerts** on the route, and **along the way**. **Driving mode** (GPS next stop, what's coming up, alerts ahead, safety tips) is the same as on the site. |
+| **Community** | **Messages**, **connections** (requests, accept, decline, block), **my circles**, **find a circle**, **my profile** and **privacy & visibility**, with unread counts. Circles work as on the site: join, start a discussion, reply, mark Helpful, save, report, block, and connect with People on a Similar Path. |
 | **Alerts** | Travel alerts on the member's routes, then their notifications. |
-| **Account** | Sign in and out, their plan, **alerts on this device** (push notifications), miles or kilometres, and how to install the app. |
-
-Free members see everything the site shows them, with the same Hey! En Route
-Plus offers where Plus features are.
+| **Account** | Their plan, every part of their account from the site (profile, city matches, saved, routes, privacy, notification and account settings, businesses), **alerts on this device**, miles or kilometres, installing the app, and the site's menu (cities, events, compare, add your business, guidelines, Plus). |
 
 ## Publishing it (GitHub Pages)
 
@@ -78,6 +80,12 @@ custom domain under **Settings → Pages**.
   scripts are), `app/me`, `app/city/{id}` and `app/alerts`. Everything else
   uses the same endpoints as the site: `cities`, `trips`, `save`, `notices`,
   `alerts/route`, `drive`, `tips`, `crime-areas` and `push`.
+- **Website pages:** `#/p/<address>` shows any page of the site. The app
+  asks for it with `?hen_app=1` and its key, puts the page's content in
+  place and runs the site's own scripts on it (`src/site.js`,
+  `src/views/page.js`). Links to the site stay in the app, forms are sent
+  from it, and the site's scripts move between pages through
+  `window.henHost`.
 - **Notifications:** the site sends an empty push, and the app's service
   worker (`sw.js`) asks the site what's new and shows it.
 
@@ -99,7 +107,8 @@ src/api.js             calls to the site, with the app key
 src/store.js           settings, the signed-in member, the city list
 src/ui.js              small shared helpers
 src/app.js             screens, navigation, and the bridge to driving mode
-src/views/*.js         one file per screen
+src/site.js            website pages inside the app
+src/views/*.js         one file per screen (page.js shows website pages)
 icons/                 app icons (icon.svg is the source)
 ```
 

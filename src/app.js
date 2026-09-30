@@ -13,6 +13,10 @@ import route from './views/route.js';
 import alerts from './views/alerts.js';
 import account from './views/account.js';
 import reset from './views/reset.js';
+import community from './views/community.js';
+import page, { tabFor } from './views/page.js';
+import { ensureSite } from './site.js';
+import { signOut } from './store.js';
 
 const views = [
 	[ /^#?\/?(explore)?$/, explore, 'explore' ],
@@ -20,7 +24,10 @@ const views = [
 	[ /^#\/routes$/, routes, 'routes' ],
 	[ /^#\/route\/(\d+)$/, route, 'routes' ],
 	[ /^#\/alerts$/, alerts, 'alerts' ],
-	[ /^#\/account$/, account, 'account' ],
+	[ /^#\/account(\?.*)?$/, account, 'account' ],
+	[ /^#\/community$/, community, 'community' ],
+	[ /^#\/p\/(.+)$/, page, 'explore' ],
+	[ /^#\/signout$/, async ( box ) => { await signOut(); location.replace( '#/account' ); }, 'account' ],
 	[ /^#\/reset(\?.*)?$/, reset, 'account' ],
 ];
 
@@ -33,7 +40,7 @@ async function show() {
 	let tab = 'explore';
 	for ( const [ re, fn, t ] of views ) {
 		match = hash.match( re );
-		if ( match ) { view = fn; tab = t; break; }
+		if ( match ) { view = fn; tab = t === 'explore' && fn === page ? tabFor( decodeURIComponent( match[ 1 ] ) ) : t; break; }
 	}
 	$$( '.app-tabs a' ).forEach( ( a ) => a.setAttribute( 'aria-current', a.dataset.tab === tab ? 'page' : 'false' ) );
 	main.scrollTop = 0;
@@ -59,9 +66,12 @@ document.addEventListener( 'click', ( e ) => {
 
 /* The unread count on the Alerts tab. */
 function updateBadge() {
-	const n = store.me ? store.me.unread : 0;
-	const badge = $( '.app-tabs [data-tab="alerts"] .app-badge' );
-	if ( badge ) { badge.textContent = n > 9 ? '9+' : String( n ); badge.hidden = ! n; }
+	const set = ( tab, n ) => {
+		const badge = $( '.app-tabs [data-tab="' + tab + '"] .app-badge' );
+		if ( badge ) { badge.textContent = n > 9 ? '9+' : String( n ); badge.hidden = ! n; }
+	};
+	set( 'alerts', store.me ? store.me.unread : 0 );
+	set( 'community', store.me ? ( store.me.messages || 0 ) + ( store.me.requests || 0 ) : 0 );
 }
 
 window.addEventListener( 'hashchange', show );
@@ -77,14 +87,7 @@ window.addEventListener( 'hen:signedout', () => {
  * ---------------------------------------------------------------- */
 
 export async function prepareDriving() {
-	const cfg = store.config || {};
-	window.hen = window.hen || {};
-	window.hen.api = ( path, method, body ) => api( path, method, body );
-	window.henConfig = { tiles: cfg.tiles, urls: cfg.urls || {} };
-	window.henUnits = { dist };
-	const assets = cfg.assets || {};
-	await Promise.all( [ load( assets.leaflet_css ), load( assets.leaflet_js ) ] ).catch( () => {} );
-	await load( assets.drive_js );
+	await ensureSite();
 }
 
 /* Directions menus (from the site's styles): one open at a time. */

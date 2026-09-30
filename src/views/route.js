@@ -55,7 +55,7 @@ export default async function route( outer, [ id ] ) {
 			( undefined !== s.total_cost ? '<dl class="app-facts"><div><dt>Stays</dt><dd>' + money( s.stay_cost ) + '</dd></div>' + ( s.fuel_cost ? '<div><dt>Fuel</dt><dd>' + money( s.fuel_cost ) + '</dd></div>' : '' ) + '<div><dt>Estimated total</dt><dd><strong>' + money( s.total_cost ) + '</strong></dd></div></dl>' : '' ) +
 			'<section data-alerts></section>' +
 			'<section data-along></section>' +
-			'<p class="app-more">' + siteLink( store.config.urls.account + ( store.config.urls.account.includes( '?' ) ? '&' : '?' ) + 'view=routes&route=' + data.id, 'Open this route on heyenroute.com ↗', 'hen-btn hen-btn--ghost' ) + '</p>';
+			'';
 		drawMap();
 		drawAlerts( ids );
 		drawAlong( ids );

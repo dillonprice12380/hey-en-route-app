@@ -5,9 +5,24 @@
 import { api, signedIn } from '../api.js';
 import { store, signIn, signOut, loadMe } from '../store.js';
 import { $, esc, siteLink, toast, units } from '../ui.js';
+import { appHref } from '../site.js';
 
 let installPrompt = null;
 window.addEventListener( 'beforeinstallprompt', ( e ) => { e.preventDefault(); installPrompt = e; } );
+
+/** A row linking to a page of the site, shown in the app. */
+export function siteRow( url, label, count = 0, note = '' ) {
+	return '<li><a class="app-row" href="' + esc( appHref( url ) || url ) + '"><span><strong>' + esc( label ) + '</strong>' + ( note ? '<br><span class="hen-muted">' + esc( note ) + '</span>' : '' ) + '</span>' +
+		( count ? '<span class="app-count-badge">' + ( count > 9 ? '9+' : count ) + '</span>' : '<span class="app-chevron" aria-hidden="true">›</span>' ) + '</a></li>';
+}
+
+/** The site's menu (cities, events, compare, add a business…), for "More". */
+function moreList() {
+	const c = store.config || {};
+	const rows = ( c.menu || [] ).map( ( m ) => siteRow( m.url, m.title ) );
+	if ( c.urls && c.urls.plus ) { rows.push( siteRow( c.urls.plus, 'Hey! En Route Plus' ) ); }
+	return rows.length ? '<h2 class="app-sub">More from Hey! En Route</h2><ul class="app-list">' + rows.join( '' ) + '</ul>' : '';
+}
 
 export default async function account( main ) {
 	if ( ! signedIn() ) {
@@ -17,7 +32,7 @@ export default async function account( main ) {
 			'<label class="app-field"><span>Password</span><input type="password" name="password" autocomplete="current-password" required></label>' +
 			'<p class="app-error" data-error role="alert" hidden></p>' +
 			'<button class="hen-btn hen-btn--primary" type="submit">Sign in</button></form>' +
-			'<p class="app-links"><button type="button" class="app-linkbtn" data-forgot-open>Forgot your password?</button> · ' + siteLink( store.config.urls.join, 'Create a free account' ) + '</p>' +
+			'<p class="app-links"><button type="button" class="app-linkbtn" data-forgot-open>Forgot your password?</button> · <a href="' + esc( appHref( store.config.urls.join ) ) + '">Create a free account</a></p>' +
 			'<form class="app-form" data-forgot hidden>' +
 			'<h2 class="app-subtitle">Reset your password</h2>' +
 			'<p class="app-lede">Enter the email you signed up with and we’ll send you a link to choose a new password.</p>' +
@@ -25,8 +40,10 @@ export default async function account( main ) {
 			'<p class="app-error" data-error role="alert" hidden></p>' +
 			'<p class="app-ok" data-ok role="status" hidden></p>' +
 			'<button class="hen-btn hen-btn--primary" type="submit">Send the link</button></form>' +
+			moreList() +
 			installBlock();
 		bindForgot( main );
+		if ( /[?&]forgot=1/.test( location.hash ) ) { $( '[data-forgot-open]', main ).click(); }
 		$( '[data-signin]', main ).addEventListener( 'submit', async ( e ) => {
 			e.preventDefault();
 			const f = e.currentTarget;
@@ -52,19 +69,28 @@ export default async function account( main ) {
 	if ( ! me ) { main.innerHTML = '<p class="app-empty">Couldn’t load your account.</p>'; return; }
 	main.innerHTML = '<header class="app-head"><h1 class="app-title">' + esc( me.name ) + '</h1><p class="app-lede">' + esc( me.email ) + '</p></header>' +
 		'<div class="app-card"><p><strong>' + ( me.plus ? 'Hey! En Route Plus' : 'Free account' ) + '</strong><br><span class="hen-muted">' + esc( me.plan ) + '</span></p>' +
-		( me.plus ? '' : siteLink( store.config.urls.plus, 'Get Hey! En Route Plus', 'hen-btn hen-btn--primary hen-btn--small' ) ) + '</div>' +
+		( me.plus ? '' : '<a class="hen-btn hen-btn--primary hen-btn--small" href="' + esc( appHref( store.config.urls.plus ) ) + '">Get Hey! En Route Plus</a>' ) + '</div>' +
+		'<h2 class="app-sub">Your account</h2><ul class="app-list">' +
+			( me.views || [] ).filter( ( v ) => ! [ 'circles', 'connections', 'messages' ].includes( v.key ) ).map( ( v ) => siteRow( v.url, v.label, v.count ) ).join( '' ) +
+		'</ul>' +
 		'<h2 class="app-sub">Alerts on this device</h2>' +
 		'<div class="app-card"><p class="hen-muted" data-push-status>Checking…</p><button type="button" class="hen-btn hen-btn--small" data-push hidden></button></div>' +
 		'<h2 class="app-sub">Distances</h2>' +
 		'<div class="app-seg" role="group" aria-label="Distances in"><button type="button" data-units="mi" aria-pressed="' + ( 'mi' === units() ) + '">Miles</button><button type="button" data-units="km" aria-pressed="' + ( 'km' === units() ) + '">Kilometres</button></div>' +
 		installBlock() +
-		'<p class="app-links">' + siteLink( store.config.urls.account + ( store.config.urls.account.includes( '?' ) ? '&' : '?' ) + 'view=notifications', 'Alert and email settings on heyenroute.com ↗' ) + '</p>' +
+		moreList() +
 		'<p><button type="button" class="hen-btn hen-btn--ghost" data-signout>Sign out</button></p>';
 
 	main.addEventListener( 'click', async ( e ) => {
 		const u = e.target.closest( '[data-units]' );
 		if ( u ) {
-			try { localStorage.setItem( 'hen_units', u.dataset.units ); } catch ( err ) { /* ignore */ }
+			try {
+				localStorage.setItem( 'hen_units', u.dataset.units );
+				// The site's pages in the app use the same choice.
+				const site = JSON.parse( localStorage.getItem( 'hen-units' ) || '{}' );
+				site.dist = u.dataset.units;
+				localStorage.setItem( 'hen-units', JSON.stringify( site ) );
+			} catch ( err ) { /* ignore */ }
 			main.querySelectorAll( '[data-units]' ).forEach( ( b ) => b.setAttribute( 'aria-pressed', String( b === u ) ) );
 		}
 		if ( e.target.closest( '[data-signout]' ) ) {

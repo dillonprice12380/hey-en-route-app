@@ -1,7 +1,8 @@
 /** A city: how it scores, its cost, save it, add it to a route, directions. */
 import { api, signedIn } from '../api.js';
 import { store, loadMe } from '../store.js';
-import { $, esc, dirsMenu, siteLink, toast, loading, problem } from '../ui.js';
+import { $, esc, dirsMenu, toast, loading, problem } from '../ui.js';
+import { appHref } from '../site.js';
 
 export default async function city( main, [ id ] ) {
 	main.innerHTML = loading();
@@ -27,8 +28,11 @@ export default async function city( main, [ id ] ) {
 			( c.day ? '<div><dt>A day, mid-range</dt><dd>About $' + c.day.toLocaleString() + '</dd></div>' : '' ) +
 			( c.season ? '<div><dt>Best time to go</dt><dd>' + esc( c.season ) + '</dd></div>' : '' ) +
 		'</dl>' +
-		( c.places.length ? '<h2 class="app-sub">Places to go</h2><ul class="app-list">' + c.places.map( ( p ) => '<li><a class="app-row" href="' + esc( p.u ) + '" target="_blank" rel="noopener"><span><strong>' + esc( p.t ) + '</strong><br><span class="hen-muted">' + esc( p.cat ) + '</span></span><span class="app-chevron" aria-hidden="true">↗</span></a></li>' ).join( '' ) + '</ul>' : '' ) +
-		'<p class="app-more">' + siteLink( c.url, 'The full ' + c.name + ' guide on heyenroute.com ↗', 'hen-btn hen-btn--ghost' ) + '</p>' +
+		( c.places.length ? '<h2 class="app-sub">Places to go</h2><ul class="app-list">' + c.places.map( ( p ) => '<li><a class="app-row" href="' + esc( appHref( p.u ) || p.u ) + '"><span><strong>' + esc( p.t ) + '</strong><br><span class="hen-muted">' + esc( p.cat ) + '</span></span><span class="app-chevron" aria-hidden="true">›</span></a></li>' ).join( '' ) + '</ul>' : '' ) +
+		'<div class="app-actions app-actions--guide">' +
+			'<a class="hen-btn hen-btn--primary" href="' + esc( appHref( c.url ) ) + '">The full ' + esc( c.name ) + ' guide</a>' +
+			'<a class="hen-btn" href="' + esc( appHref( c.url + '#tab-circle' ) ) + '">' + esc( c.name ) + ' City Circle</a>' +
+		'</div>' +
 		'<div data-sheet></div>';
 
 	const needSignIn = () => {
