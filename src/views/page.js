@@ -41,6 +41,7 @@ export default async function page( main, [ enc ] ) {
 		document.title = title ? title + ' · Hey! En Route' : 'Hey! En Route';
 		main.innerHTML =
 			'<div class="app-pagebar"><button type="button" class="app-pagebar__back" data-back aria-label="Back">‹</button><span class="app-pagebar__title">' + esc( title ) + '</span></div>' +
+			( data.plain && older( store.config && store.config.version, '3.14.0' ) ? '<p class="app-note">This page shows as a visitor sees it until Hey! En Route’s site is updated.</p>' : '' ) +
 			'<div class="app-page ' + esc( data.body || '' ) + '">' + ( data.html || '' ) + '</div>';
 		const box = main.querySelector( '.app-page' );
 		initSite( box );
@@ -52,6 +53,16 @@ export default async function page( main, [ enc ] ) {
 	current.render = () => render();
 	current.form = render;
 	await render();
+}
+
+/** Is version a older than b ("3.13.0" < "3.14.0")? */
+function older( a, b ) {
+	const x = String( a || '0' ).split( '.' ).map( Number );
+	const y = String( b ).split( '.' ).map( Number );
+	for ( let i = 0; i < 3; i++ ) {
+		if ( ( x[ i ] || 0 ) !== ( y[ i ] || 0 ) ) { return ( x[ i ] || 0 ) < ( y[ i ] || 0 ); }
+	}
+	return false;
 }
 
 /* Back: to where the member came from in the app. */

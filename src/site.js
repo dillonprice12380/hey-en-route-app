@@ -166,8 +166,13 @@ export async function fetchPage( url, form ) {
 	} catch ( e ) {
 		return { error: navigator.onLine ? 'Couldn’t reach Hey! En Route. Try again in a moment.' : 'You’re offline.' };
 	}
-	const data = await res.json().catch( () => null );
-	if ( ! data ) { return { error: 'That page didn’t load. Try again in a moment.' }; }
+	const text = await res.text().catch( () => '' );
+	// JSON from the site; if a plugin on the site added something around it, the JSON inside it;
+	// if the site sent an ordinary web page, that page's content.
+	const data = readJson( text ) || readHtml( text, res.url );
+	if ( ! data ) {
+		return { error: 'That page didn’t load' + ( res.status >= 400 ? ' (error ' + res.status + ')' : '' ) + '. Try again in a moment.' };
+	}
 	// Signing in, joining or a new password on a site form: the app's key comes with the answer.
 	if ( data.key ) {
 		setKey( data.key );
@@ -178,6 +183,27 @@ export async function fetchPage( url, form ) {
 		window.dispatchEvent( new CustomEvent( 'hen:signedout' ) );
 	}
 	return data;
+}
+
+function readJson( text ) {
+	const t = String( text || '' ).trim();
+	if ( ! t ) { return null; }
+	try { return JSON.parse( t ); } catch ( e ) { /* Something around it; look inside. */ }
+	const a = t.indexOf( '{' );
+	const b = t.lastIndexOf( '}' );
+	if ( a < 0 || b <= a ) { return null; }
+	try { return JSON.parse( t.slice( a, b + 1 ) ); } catch ( e ) { return null; }
+}
+
+function readHtml( text, url ) {
+	if ( ! /<(main|body)\b/i.test( text || '' ) ) { return null; }
+	const doc = new DOMParser().parseFromString( text, 'text/html' );
+	const main = doc.querySelector( 'main' ) || doc.body;
+	if ( ! main ) { return null; }
+	main.querySelectorAll( 'script:not([type="application/ld+json"]):not([type="application/json"])' ).forEach( ( el ) => el.remove() );
+	const u = new URL( url || SITE );
+	u.searchParams.delete( 'hen_app' );
+	return { url: u.href, title: doc.title || '', body: doc.body ? doc.body.className : '', html: main.innerHTML, plain: true };
 }
 
 /** Follows a redirect from the site: in the app when it's the site, else outside. */

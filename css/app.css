@@ -208,3 +208,4 @@ html.hen-driving .app-tabs { display: none; }
 .app-page .her-page:has(.hen-account) > .her-page__head { display: none; }
 /* Notifications on this device are set in the app's Account tab. */
 .app-page [data-hen-push] { display: none; }
+.app-note { margin: 0 0 .75rem; padding: .6rem .8rem; border-radius: 10px; background: var(--well); font-size: .88rem; }
