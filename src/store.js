@@ -13,7 +13,9 @@ const HOUR = 3600e3;
 
 /** The site's settings (names, map tiles, push key, where its scripts are). */
 export async function loadConfig() {
-	store.config = await cached( 'app/config', 6 * HOUR );
+	// Fresh each time the app opens, so a site update (new pages, scripts) shows at once;
+	// the last copy is used when offline.
+	store.config = await cached( 'app/config', 0 );
 	return store.config;
 }
 

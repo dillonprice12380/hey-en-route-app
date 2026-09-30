@@ -31,7 +31,7 @@ export default async function city( main, [ id ] ) {
 		( c.places.length ? '<h2 class="app-sub">Places to go</h2><ul class="app-list">' + c.places.map( ( p ) => '<li><a class="app-row" href="' + esc( appHref( p.u ) || p.u ) + '"><span><strong>' + esc( p.t ) + '</strong><br><span class="hen-muted">' + esc( p.cat ) + '</span></span><span class="app-chevron" aria-hidden="true">›</span></a></li>' ).join( '' ) + '</ul>' : '' ) +
 		'<div class="app-actions app-actions--guide">' +
 			'<a class="hen-btn hen-btn--primary" href="' + esc( appHref( c.url ) ) + '">The full ' + esc( c.name ) + ' guide</a>' +
-			'<a class="hen-btn" href="' + esc( appHref( c.url + '#tab-circle' ) ) + '">' + esc( c.name ) + ' City Circle</a>' +
+			'<a class="hen-btn" href="' + esc( appHref( c.circle || c.url + '#tab-circle' ) ) + '">' + esc( c.name ) + ' City Circle</a>' +
 		'</div>' +
 		'<div data-sheet></div>';
 
