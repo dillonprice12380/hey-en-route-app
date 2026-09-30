@@ -31,20 +31,30 @@ Plus offers where Plus features are.
 1. In this repository, go to **Settings → Pages**.
 2. Under **Build and deployment**, choose **Deploy from a branch**, branch
    **main**, folder **/ (root)**, and click **Save**.
-3. After a minute it's live at
-   `https://<your-github-username>.github.io/hey-en-route-app/`.
+3. After a minute it's live at its address (below).
 4. On the site, go to **Hey! En Route → App**, enter that address and click
    **Save**. Members then see **Open the app** in their account.
 
 Every change pushed to `main` is published automatically.
 
-### Your own address (optional): app.heyenroute.com
+### The app's address: app.heyenroute.com
 
-1. **Settings → Pages → Custom domain:** enter `app.heyenroute.com` and save.
-2. Where your domain's DNS is managed, add a **CNAME** record: name `app`,
-   value `<your-github-username>.github.io`.
-3. Once GitHub shows the domain as verified, tick **Enforce HTTPS**.
-4. Update the address on **Hey! En Route → App**.
+The app lives at **https://app.heyenroute.com/**. The `CNAME` file in this
+repository tells GitHub Pages to use that address, and the old
+`github.io` address forwards there.
+
+It needs one DNS record where heyenroute.com's DNS is managed:
+
+| Type | Name | Points to | TTL |
+|---|---|---|---|
+| CNAME | `app` | `dillonprice12380.github.io` | default |
+
+Once the address works, **Settings → Pages** shows it as verified; tick
+**Enforce HTTPS** there. On the site, **Hey! En Route → App** should say
+`https://app.heyenroute.com/`.
+
+To go back to the `github.io` address, delete the `CNAME` file and remove the
+custom domain under **Settings → Pages**.
 
 ## Installing it on a phone
 
@@ -77,6 +87,7 @@ address on this device; `?site=reset` goes back to heyenroute.com.
 ## Files
 
 ```
+CNAME                  the app's address (app.heyenroute.com)
 index.html             the page, and the tab bar
 manifest.webmanifest   name, icons, colours: what makes it installable
 sw.js                  offline use, and notifications
