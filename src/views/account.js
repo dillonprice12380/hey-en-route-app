@@ -17,8 +17,16 @@ export default async function account( main ) {
 			'<label class="app-field"><span>Password</span><input type="password" name="password" autocomplete="current-password" required></label>' +
 			'<p class="app-error" data-error role="alert" hidden></p>' +
 			'<button class="hen-btn hen-btn--primary" type="submit">Sign in</button></form>' +
-			'<p class="app-links">' + siteLink( store.config.urls.lost, 'Forgot your password?' ) + ' · ' + siteLink( store.config.urls.join, 'Create a free account' ) + '</p>' +
+			'<p class="app-links"><button type="button" class="app-linkbtn" data-forgot-open>Forgot your password?</button> · ' + siteLink( store.config.urls.join, 'Create a free account' ) + '</p>' +
+			'<form class="app-form" data-forgot hidden>' +
+			'<h2 class="app-subtitle">Reset your password</h2>' +
+			'<p class="app-lede">Enter the email you signed up with and we’ll send you a link to choose a new password.</p>' +
+			'<label class="app-field"><span>Email</span><input type="email" name="email" autocomplete="email" required></label>' +
+			'<p class="app-error" data-error role="alert" hidden></p>' +
+			'<p class="app-ok" data-ok role="status" hidden></p>' +
+			'<button class="hen-btn hen-btn--primary" type="submit">Send the link</button></form>' +
 			installBlock();
+		bindForgot( main );
 		$( '[data-signin]', main ).addEventListener( 'submit', async ( e ) => {
 			e.preventDefault();
 			const f = e.currentTarget;
@@ -77,6 +85,37 @@ export default async function account( main ) {
 const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 const isIos = () => /iphone|ipad|ipod/i.test( navigator.userAgent );
 const installed = () => window.matchMedia( '(display-mode: standalone)' ).matches || navigator.standalone === true;
+
+/** "Forgot your password?": the site emails a reset link; nothing opens WordPress. */
+function bindForgot( main ) {
+	const form = $( '[data-forgot]', main );
+	$( '[data-forgot-open]', main ).addEventListener( 'click', () => {
+		form.hidden = false;
+		const typed = $( '[data-signin] [name=login]', main ).value.trim();
+		if ( typed && ! form.email.value ) { form.email.value = typed; }
+		form.email.focus();
+		form.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+	} );
+	form.addEventListener( 'submit', async ( e ) => {
+		e.preventDefault();
+		const err = $( '[data-error]', form );
+		const ok = $( '[data-ok]', form );
+		const btn = $( 'button', form );
+		btn.disabled = true;
+		err.hidden = ok.hidden = true;
+		const res = await api( 'app/forgot', 'POST', { email: form.email.value.trim() } );
+		btn.disabled = false;
+		if ( res.ok ) {
+			ok.textContent = res.body.message || 'Check your email for a link to choose a new password.';
+			ok.hidden = false;
+		} else if ( 404 === res.status && store.config.urls.lost ) {
+			window.open( store.config.urls.lost, '_blank', 'noopener' ); // A site on an older plugin.
+		} else {
+			err.textContent = res.body.message || 'Couldn’t send the link. Try again in a moment.';
+			err.hidden = false;
+		}
+	} );
+}
 
 function urlKey( s ) {
 	s = s.replace( /-/g, '+' ).replace( /_/g, '/' );

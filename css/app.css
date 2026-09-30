@@ -134,6 +134,10 @@ html.hen-driving .app-tabs { display: none; }
 .app-field { display: grid; gap: .3rem; font-size: .88rem; font-weight: 600; }
 .app-field input { min-height: 46px; padding: .55rem .8rem; border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); color: var(--ink); font-weight: 400; font-size: 1rem; }
 .app-error { margin: 0; padding: .6rem .8rem; border-radius: 10px; background: color-mix(in srgb, #b3261e 10%, var(--surface)); color: var(--ink); }
+.app-ok { margin: 0; padding: .6rem .8rem; border-radius: 10px; background: color-mix(in srgb, var(--teal) 12%, var(--surface)); color: var(--ink); }
+.app-form[hidden], .app-error[hidden], .app-ok[hidden] { display: none; }
+.app-subtitle { margin: .5rem 0 0; font-size: 1.15rem; }
+.app-linkbtn { padding: 0; border: 0; background: none; color: var(--teal); font: inherit; text-decoration: underline; cursor: pointer; }
 .app-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 0 0 1rem; }
 .app-seg { display: inline-flex; padding: 3px; border-radius: 12px; background: var(--well); }
 .app-seg button { min-height: 38px; padding: .3rem 1rem; border: 0; border-radius: 9px; background: none; color: var(--ink); font-weight: 600; cursor: pointer; }

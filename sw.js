@@ -5,7 +5,7 @@
  * The site sends an empty "wake up" push; this asks the site what's new
  * (by this device's push address) and shows it.
  */
-const VERSION = 'hen-app-1';
+const VERSION = 'hen-app-2';
 const SHELL = [
 	'./',
 	'index.html',
